@@ -1,6 +1,6 @@
 // console.log('Hello WPU');
 
-// const cetakNama = require('./coba');
+// const cetakNama = require('./coba')3;
 
 
 const coba = require('./coba');
