@@ -7,6 +7,12 @@ const port = 3000;
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
 
+// application level middleware
+app.use((req, res, next) => {
+  console.log('Time', Date.now());
+  next()
+})
+
 app.get('/', (req, res) => {
   // res.sendFile('./index.html', { root: __dirname });
   const mahasiswa = [
@@ -30,6 +36,7 @@ app.get('/', (req, res) => {
     mahasiswa,
   });
 });
+
 app.get('/about', (req, res) => {
   res.render('about', {
     layout: 'layouts/main-layout',
@@ -48,7 +55,7 @@ app.get('/product/:id', (req, res) => {
   );
 });
 
-app.use('/', (req, res) => {
+app.use((req, res) => {
   res.status(404);
   res.send('<h1>404</h1>');
 });
