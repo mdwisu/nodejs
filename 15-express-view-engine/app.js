@@ -28,10 +28,10 @@ app.get('/', (req, res) => {
   });
 });
 app.get('/about', (req, res) => {
-  res.render('about');
+  res.render('about', {title: 'halaman about'});
 });
 app.get('/contact', (req, res) => {
-  res.render('contact');
+  res.render('contact', {title: 'halaman contact'});
 });
 app.get('/product/:id', (req, res) => {
   res.send(
