@@ -1,20 +1,29 @@
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
+const morgan = require('morgan');
+const path = require('path')
+const fs = require('fs')
 const app = express();
 const port = 3000;
 
+// create a write stream (in append mode)
+var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {
+  flags: 'a',
+});
 // gunakan ejs
 app.set('view engine', 'ejs');
+// third-party middleware
 app.use(expressLayouts);
+app.use(morgan('combined', { stream: accessLogStream }));
 
 // built in middleware
-app.use(express.static('public'))
+app.use(express.static('public'));
 
 // application level middleware
 app.use((req, res, next) => {
   console.log('Time', Date.now());
-  next()
-})
+  next();
+});
 
 app.get('/', (req, res) => {
   // res.sendFile('./index.html', { root: __dirname });
