@@ -2,7 +2,6 @@
 // file system
 const fs = require('fs');
 
-
 // membuat folder data
 const dirPath = './data';
 if (!fs.existsSync(dirPath)) {
@@ -21,5 +20,12 @@ const loadContact = () => {
   return contacts;
 };
 
+const findContact = (nama) => {
+  const contacts = loadContact();
+  const contact = contacts.find(
+    (contact) => contact.nama.toLowerCase() === nama.toLowerCase()
+  );
+  return contact
+};
 
-module.exports = { loadContact }
+module.exports = { loadContact, findContact };
