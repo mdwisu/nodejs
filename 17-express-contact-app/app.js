@@ -1,20 +1,15 @@
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
-const morgan = require('morgan');
-const path = require('path')
-const fs = require('fs')
+const { loadContact } = require('./utils/contacts');
+
 const app = express();
 const port = 3000;
 
-// create a write stream (in append mode)
-var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {
-  flags: 'a',
-});
 // gunakan ejs
 app.set('view engine', 'ejs');
+
 // third-party middleware
 app.use(expressLayouts);
-app.use(morgan('combined', { stream: accessLogStream }));
 
 // built in middleware
 app.use(express.static('public'));
@@ -25,6 +20,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// ! home
 app.get('/', (req, res) => {
   // res.sendFile('./index.html', { root: __dirname });
   const mahasiswa = [
@@ -49,22 +45,20 @@ app.get('/', (req, res) => {
   });
 });
 
+// ! about
 app.get('/about', (req, res) => {
   res.render('about', {
     layout: 'layouts/main-layout',
     title: 'halaman about',
   });
 });
+
+// ! contact
 app.get('/contact', (req, res) => {
   res.render('contact', {
     layout: 'layouts/main-layout',
     title: 'halaman contact',
   });
-});
-app.get('/product/:id', (req, res) => {
-  res.send(
-    `Product ID : ${req.params.id} <br> Category ID : ${req.query.category}`
-  );
 });
 
 app.use((req, res) => {
