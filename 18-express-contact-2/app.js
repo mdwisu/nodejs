@@ -1,6 +1,6 @@
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
-const { loadContact, findContact } = require('./utils/contacts');
+const { loadContact, findContact, addContact } = require('./utils/contacts');
 
 const app = express();
 const port = 3000;
@@ -13,13 +13,14 @@ app.use(expressLayouts);
 
 // built in middleware
 app.use(express.static('public'));
+app.use(express.urlencoded()) // parsing proses tambah contact
 
 // application level middleware
 app.use((req, res, next) => {
   console.log('Time', Date.now());
   next();
 });
-
+// ! section route
 // ! home
 app.get('/', (req, res) => {
   // res.sendFile('./index.html', { root: __dirname });
@@ -54,6 +55,7 @@ app.get('/about', (req, res) => {
 });
 
 // ! contact
+// halaman utama
 app.get('/contact', (req, res) => {
   const contacts = loadContact();
   res.render('contact', {
@@ -62,6 +64,19 @@ app.get('/contact', (req, res) => {
     contacts
   });
 });
+// halaman tambah data contact
+app.get('/contact/add', (req, res) => {
+  res.render('add-contact', {
+    layout: 'layouts/main-layout',
+    title: 'halaman tambah data contact',
+  });
+});
+// proses tambah data contact
+app.post('/contact', (req, res) => {
+  addContact(req.body);
+  res.redirect('/contact')
+})
+// halaman detail contact
 app.get('/contact/:nama', (req, res) => {
   const contact = findContact(req.params.nama);
   res.render('detail', {
@@ -70,6 +85,7 @@ app.get('/contact/:nama', (req, res) => {
     contact
   });
 });
+// ! end of section
 
 app.use((req, res) => {
   res.status(404);
