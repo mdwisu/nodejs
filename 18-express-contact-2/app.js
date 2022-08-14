@@ -7,6 +7,9 @@ const {
   cekDuplikat,
 } = require('./utils/contacts');
 const { body, validationResult, check } = require('express-validator');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const flash = require('connect-flash');
 
 const app = express();
 const port = 3000;
@@ -26,6 +29,19 @@ app.use((req, res, next) => {
   console.log('Time', Date.now());
   next();
 });
+
+// konfigurasi flash
+app.use(cookieParser('secret'));
+app.use(
+  session({
+    cookie: { maxAge: 6000 },
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+app.use(flash());
+
 // ! section route
 // ! home
 app.get('/', (req, res) => {
@@ -68,6 +84,7 @@ app.get('/contact', (req, res) => {
     layout: 'layouts/main-layout',
     title: 'halaman contact',
     contacts,
+    msg: req.flash('msg'),
   });
 });
 // halaman tambah data contact
@@ -94,7 +111,6 @@ app.post(
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
       res.render('add-contact', {
         title: 'From Tambah Data Contact',
         layout: 'layouts/main-layout',
@@ -102,6 +118,8 @@ app.post(
       });
     }
     addContact(req.body);
+    // kirimkan flash massage
+    req.flash('msg', 'Data contact berhasil ditambahkan!');
     res.redirect('/contact');
   }
 );
