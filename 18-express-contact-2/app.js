@@ -1,6 +1,12 @@
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
-const { loadContact, findContact, addContact } = require('./utils/contacts');
+const {
+  loadContact,
+  findContact,
+  addContact,
+  cekDuplikat,
+} = require('./utils/contacts');
+const { body, validationResult, check } = require('express-validator');
 
 const app = express();
 const port = 3000;
@@ -13,7 +19,7 @@ app.use(expressLayouts);
 
 // built in middleware
 app.use(express.static('public'));
-app.use(express.urlencoded()) // parsing proses tambah contact
+app.use(express.urlencoded({ extended: true })); // parsing proses tambah contact
 
 // application level middleware
 app.use((req, res, next) => {
@@ -61,7 +67,7 @@ app.get('/contact', (req, res) => {
   res.render('contact', {
     layout: 'layouts/main-layout',
     title: 'halaman contact',
-    contacts
+    contacts,
   });
 });
 // halaman tambah data contact
@@ -72,17 +78,40 @@ app.get('/contact/add', (req, res) => {
   });
 });
 // proses tambah data contact
-app.post('/contact', (req, res) => {
-  addContact(req.body);
-  res.redirect('/contact')
-})
+app.post(
+  '/contact',
+  [
+    body('nama').custom((value) => {
+      const duplikat = cekDuplikat(value);
+      if (duplikat) {
+        throw new Error('Nama contact sudah digunakan');
+      }
+      return true;
+    }),
+    check('email', 'Email tidak valid').isEmail(),
+    check('nohp', 'Nomor hp tidak valid').isMobilePhone('id-ID'),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+      res.render('add-contact', {
+        title: 'From Tambah Data Contact',
+        layout: 'layouts/main-layout',
+        errors: errors.array(),
+      });
+    }
+    addContact(req.body);
+    res.redirect('/contact');
+  }
+);
 // halaman detail contact
 app.get('/contact/:nama', (req, res) => {
   const contact = findContact(req.params.nama);
   res.render('detail', {
     layout: 'layouts/main-layout',
     title: 'halaman detail contact',
-    contact
+    contact,
   });
 });
 // ! end of section
