@@ -6,6 +6,7 @@ const {
   addContact,
   cekDuplikat,
   deleteContact,
+  updateContacts
 } = require('./utils/contacts');
 const { body, validationResult, check } = require('express-validator');
 const session = require('express-session');
