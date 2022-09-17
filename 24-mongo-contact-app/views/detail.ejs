@@ -5,7 +5,9 @@
       <% if (!contact) { %>
       <div class="alert alert-danger fw-bold" role="alert">
         Data contact tidak ditemukan<br />
-        <a href="/contact" class="fw-normal">&laquo kembali ke daftar contact</a>
+        <a href="/contact" class="fw-normal"
+          >&laquo kembali ke daftar contact</a
+        >
       </div>
       <% } else { %>
       <div class="card" style="width: 18rem">
@@ -13,8 +15,22 @@
           <h5 class="card-title"><%- contact.nama %></h5>
           <h6 class="card-subtitle mb-2 text-muted"><%- contact.nohp %></h6>
           <p class="card-text"><%- contact.email %></p>
-          <a href="/contact/edit/<%- contact.nama %>" class="btn btn-info badge mt-3">ubah</a>
-          <a href="/contact/delete/<%- contact.nama %>" class="btn btn-danger badge mt-3" onclick="return confirm('yakin?')">hapus</a>
+          <a
+            href="/contact/edit/<%- contact.nama %>"
+            class="btn btn-info badge mt-3"
+            >ubah</a
+          >
+          <!-- <a href="/contact/delete/<%- contact.nama %>" class="btn btn-danger badge mt-3" onclick="return confirm('yakin?')">hapus</a> -->
+          <form action="/contact?_method=DELETE" method="POST" class="d-inline">
+            <button
+              type="submit"
+              class="btn btn-danger badge"
+              onclick="return confirm('yakin?')"
+            >
+              hapus
+            </button>
+            <input type="hidden" name="nama" value="<%- contact.nama %>" />
+          </form>
           <a href="/contact" class="card-link d-block"
             >&laquo Kembali kedaftar contact</a
           >

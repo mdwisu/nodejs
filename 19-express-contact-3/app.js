@@ -135,10 +135,10 @@ app.get('/contact/delete/:nama', (req, res) => {
     res.send('<h1>404</h1>');
   } else {
     deleteContact(req.params.nama);
+    // kirimkan flash massage
+    req.flash('msg', 'Data contact berhasil dihapus!');
+    res.redirect('/contact');
   }
-  // kirimkan flash massage
-  req.flash('msg', 'Data contact berhasil dihapus!');
-  res.redirect('/contact');
 });
 // halaman ubah data contact
 app.get('/contact/edit/:nama', (req, res) => {
